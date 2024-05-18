@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
 from typing import List
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -60,3 +60,7 @@ async def predict(file: UploadFile = File(...)):
     output.seek(0)
 
     return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment;filename=predictions.csv"})
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)
