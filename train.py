@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import  LogisticRegression
 from sklearn.pipeline import Pipeline
 
-data = pd.read_csv("../data/data.csv")
+data = pd.read_csv("data/data.csv")
 
 X = data.iloc[:,1:-1]
 y = data.iloc[:,-1]
