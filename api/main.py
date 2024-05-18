@@ -20,9 +20,12 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-model = pickle.load(
-    open('model.pkl', 'rb')
-)
+try:
+    with open('model.pkl', 'rb') as f:
+        model = pickle.load(f)
+except Exception as e:
+    print(f"Error loading model: {e}")
+    raise
 
 @app.get("/", response_class = HTMLResponse)
 def home():
@@ -44,22 +47,26 @@ def home():
     
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...)):
-    # Read the uploaded CSV file
-    contents = await file.read()
-    df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+    try:
+        # Read the uploaded CSV file
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
 
-    # Assume the DataFrame has the same structure as the training data
-    predictions = model.predict(df)
+        # Assume the DataFrame has the same structure as the training data
+        predictions = model.predict(df)
 
-    # Add predictions to the DataFrame
-    df['predictions'] = predictions
+        # Add predictions to the DataFrame
+        df['predictions'] = predictions
 
-    # Convert DataFrame to CSV
-    output = io.StringIO()
-    df.to_csv(output, index=False)
-    output.seek(0)
+        # Convert DataFrame to CSV
+        output = io.StringIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
 
-    return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment;filename=predictions.csv"})
+        return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment;filename=predictions.csv"})
+    
+    except Exception as e:
+        return {"error": str(e)}
 
 if __name__ == "__main__":
     import uvicorn
