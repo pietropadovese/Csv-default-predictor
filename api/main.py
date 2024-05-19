@@ -179,6 +179,26 @@ async def visualize(file: UploadFile = File(...)):
         <html>
         <head>
             <title>CSV Visualization</title>
+                <style>
+            body {
+                background-color: lightblue;
+                text-align: center;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            h1 {
+                margin-top: 50px;
+                color: #333;
+            }
+            img {
+                max-width: 80%;
+                height: auto;
+                margin: 20px 0;
+                border: 2px solid #ddd;
+                border-radius: 4px;
+            }
+        </style>
         </head>
         <body>
             <h1>Barplots for CSV columns</h1>
