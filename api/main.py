@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
 from typing import List
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -89,7 +89,10 @@ async def visualize(file: UploadFile = File(...)):
     try:
         contents = await file.read()
         df = pd.read_csv(pd.compat.StringIO(contents.decode("utf-8")))
-        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error reading CSV file: {e}")
+    
+    try:    
         plot_files = []
         for column in df.columns:
             plt.figure()
@@ -98,11 +101,13 @@ async def visualize(file: UploadFile = File(...)):
             plt.savefig(plot_filename)
             plt.close()
             plot_files.append(plot_filename)
-        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating plots: {e}")
+    
+    try:    
         plot_html = ""
         for plot_file in plot_files:
-            plot_html += f'<img src="/{plot_file}" alt="{plot_file}"><br>'
-        
+            plot_html += f'<img src="/{plot_file}" alt="{plot_file}"><br>'   
         return HTMLResponse(content=f"""
         <html>
         <head>
@@ -116,7 +121,7 @@ async def visualize(file: UploadFile = File(...)):
         """, media_type="text/html")
     
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=600, detail=f"Error displaying plots: {e}")
         
 
 if __name__ == "__main__":
