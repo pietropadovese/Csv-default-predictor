@@ -175,31 +175,49 @@ async def visualize(file: UploadFile = File(...)):
         plot_html = ""
         for plot_file in plot_files:
             plot_html += f'<img src="/{plot_file}" alt="{plot_file}"><br>'   
+        
         return HTMLResponse(content=f"""
         <html>
         <head>
-            <title>CSV Visualization</title>
+            <title>Loan default predictor</title>
                 <style>
-            body {
+            body {{
                 background-color: lightblue;
                 text-align: center;
                 font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
-            }
-            h1 {
-                margin-top: 50px;
-                color: #333;
-            }
-            img {
-                max-width: 80%;
-                height: auto;
-                margin: 20px 0;
-                border: 2px solid #ddd;
-                border-radius: 4px;
-            }
-        </style>
-        </head>
+            }}
+        h1 {{
+            margin-top: 50px;
+            color: #333;
+        }}
+        form {{
+            display: inline-block;
+            margin-top: 20px;
+        }}
+        input[type="file"] {{
+            display: block;
+            margin: 10px auto;
+        }}
+        input[type="submit"] {{
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }}
+        input[type="submit"]:hover {{
+            background-color: #45a049;
+        }}
+    </style>
+    </head>
         <body>
             <h1>Barplots for CSV columns</h1>
             {plot_html}
