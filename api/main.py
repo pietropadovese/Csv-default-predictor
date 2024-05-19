@@ -97,7 +97,7 @@ class Company(BaseModel):
     
 
 @app.post("/predict_json/")
-def predict(companies: List[Company]) -> List[str]:
+def predict(companies: List[Company]) -> List[int]:
     try:
         X = pd.DataFrame([dict(company) for company in companies])
         y_pred = model.predict(X)
