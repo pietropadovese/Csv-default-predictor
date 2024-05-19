@@ -88,7 +88,7 @@ async def predict(file: UploadFile = File(...)):
 async def visualize(file: UploadFile = File(...)):
     try:
         contents = await file.read()
-        df = pd.read_csv(pd.compat.StringIO(contents.decode("utf-8")))
+        df = pd.read_csv(contents)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error reading CSV file: {e}")
     
