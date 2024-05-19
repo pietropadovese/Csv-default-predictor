@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, StreamingResponse
 import io
+import matplotlib.pyplot as plt
 
 app = FastAPI(
     title="Zoo Animal CLassification",
@@ -30,7 +31,7 @@ except Exception as e:
 @app.get("/", response_class = HTMLResponse)
 def home():
     return HTMLResponse(content="""
-     <html>
+    <html>
     <head>
         <title>Animal Predictor</title>
     </head>
@@ -38,7 +39,11 @@ def home():
         <h1>Upload CSV file for prediction</h1>
         <form action="/predict/" method="post" enctype="multipart/form-data">
             <input type="file" name="file"><br><br>
-            <input type="submit" value="Upload"><br><br>
+            <input type="submit" value="Upload">
+        </form>
+        <h1>Upload CSV file to visualize</h1>
+        <form action="/visualize/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file"><br><br>
             <input type="submit" value="Visualize">
         </form>
     </body>
