@@ -38,7 +38,8 @@ def home():
         <h1>Upload CSV file for prediction</h1>
         <form action="/predict/" method="post" enctype="multipart/form-data">
             <input type="file" name="file"><br><br>
-            <input type="submit" value="Upload">
+            <input type="submit" value="Upload"><br><br>
+            <input type="submit" value="Visualize">
         </form>
     </body>
     </html>
@@ -67,6 +68,42 @@ async def predict(file: UploadFile = File(...)):
     
     except Exception as e:
         return {"error": str(e)}
+
+    
+@app.post("/visualize/", response_class=HTMLResponse)
+async def visualize(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        df = pd.read_csv(pd.compat.StringIO(contents.decode("utf-8")))
+        
+        plot_files = []
+        for column in df.columns:
+            plt.figure()
+            df[column].value_counts().plot(kind='bar')
+            plot_filename = f"static/{column}.png"
+            plt.savefig(plot_filename)
+            plt.close()
+            plot_files.append(plot_filename)
+        
+        plot_html = ""
+        for plot_file in plot_files:
+            plot_html += f'<img src="/{plot_file}" alt="{plot_file}"><br>'
+        
+        return HTMLResponse(content=f"""
+        <html>
+        <head>
+            <title>CSV Visualization</title>
+        </head>
+        <body>
+            <h1>Barplots for CSV columns</h1>
+            {plot_html}
+        </body>
+        </html>
+        """, media_type="text/html")
+    
+    except Exception as e:
+        return {"error": str(e)}
+        
 
 if __name__ == "__main__":
     import uvicorn
