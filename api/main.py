@@ -7,11 +7,20 @@ from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, StreamingResponse
 import io
 import matplotlib.pyplot as plt
+from fastapi.staticfiles import StaticFiles
+import os
+
+
 
 app = FastAPI(
     title="Zoo Animal CLassification",
     version="0.1.0",
 )
+
+# Create a directory for storing uploaded files and static files
+os.makedirs("static", exist_ok=True)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
