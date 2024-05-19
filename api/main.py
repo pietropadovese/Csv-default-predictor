@@ -9,6 +9,7 @@ import io
 import matplotlib.pyplot as plt
 from fastapi.staticfiles import StaticFiles
 import os
+import seaborn as sns
 
 
 
@@ -94,10 +95,14 @@ async def visualize(file: UploadFile = File(...)):
     
     try:    
         plot_files = []
-        for column in df.columns:
-            plt.figure()
-            df[column].value_counts().plot(kind='bar')
-            plot_filename = f"static/{column}.png"
+        for col in df.columns:
+            fig, ax = plt.subplots(ncols = 2, figsize = (10,5))
+            sns.kdeplot(data = df, x = col, ax = ax[0])
+            sns.boxplot(data = df, x = col, ax = ax[1], showfliers = False)
+            fig.suptitle(col)
+            ax[0].set_title('Kernel density')
+            ax[1].set_title('Boxplot')
+            plot_filename = f"static/{col}.png"
             plt.savefig(plot_filename)
             plt.close()
             plot_files.append(plot_filename)
