@@ -98,9 +98,13 @@ class Company(BaseModel):
 
 @app.post("/predict_json/")
 def predict(companies: List[Company]) -> List[str]:
-    X = pd.DataFrame([dict(company) for company in companies])
-    y_pred = model.predict(X)
-    return list(y_pred)
+    try:
+        X = pd.DataFrame([dict(company) for company in companies])
+        y_pred = model.predict(X)
+        return list(y_pred)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading CSV file: {e}")
+        
 
 
 
