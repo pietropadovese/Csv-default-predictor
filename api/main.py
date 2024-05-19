@@ -88,7 +88,7 @@ async def predict(file: UploadFile = File(...)):
     
 class Company(BaseModel):
     gross_margin_ratio: float
-    core_income_ratio : float
+    core_income_ratio: float
     cash_asset_ratio: float
     consolidated_liabilities_ratio: float
     tangible_assets_ratio: float
@@ -103,7 +103,7 @@ def predict(companies: List[Company]) -> List[str]:
         y_pred = model.predict(X)
         return list(y_pred)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error reading CSV file: {e}")
+        raise HTTPException(status_code=400, detail=f"Error reading CSV file: {e}")
         
 
 
