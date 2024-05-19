@@ -10,11 +10,12 @@ import matplotlib.pyplot as plt
 from fastapi.staticfiles import StaticFiles
 import os
 import seaborn as sns
+from pydantic import BaseModel
 
 
 
 app = FastAPI(
-    title="Zoo Animal CLassification",
+    title="Loan default predictor",
     version="0.1.0",
 )
 
@@ -43,11 +44,11 @@ def home():
     return HTMLResponse(content="""
     <html>
     <head>
-        <title>Animal Predictor</title>
+        <title>Loan default predictor</title>
     </head>
     <body>
         <h1>Upload CSV file for prediction</h1>
-        <form action="/predict/" method="post" enctype="multipart/form-data">
+        <form action="/predict_csv/" method="post" enctype="multipart/form-data">
             <input type="file" name="file"><br><br>
             <input type="submit" value="Upload">
         </form>
@@ -61,7 +62,7 @@ def home():
     """, media_type="text/html")
     
     
-@app.post("/predict/")
+@app.post("/predict_csv/")
 async def predict(file: UploadFile = File(...)):
     try:
         # Read the uploaded CSV file
@@ -83,6 +84,25 @@ async def predict(file: UploadFile = File(...)):
     
     except Exception as e:
         return {"error": str(e)}
+    
+    
+class Company(BaseModel):
+    gross_margin_ratio: float
+    core_income_ratio : float
+    cash_asset_ratio: float
+    consolidated_liabilities_ratio: float
+    tangible_assets_ratio: float
+    revenues: float
+    
+    
+
+@app.post("/predict_json/")
+def predict(companies: List[Company]) -> List[str]:
+    X = pd.DataFrame([dict(company) for company in companies])
+    y_pred = model.predict(X)
+    return list(y_pred)
+
+
 
     
 @app.post("/visualize/", response_class=HTMLResponse)
