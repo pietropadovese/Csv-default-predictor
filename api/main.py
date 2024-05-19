@@ -219,7 +219,7 @@ async def visualize(file: UploadFile = File(...)):
     </style>
     </head>
         <body>
-            <h1>Barplots for CSV columns</h1>
+            <h1>Variables distribution</h1>
             {plot_html}
         </body>
         </html>
